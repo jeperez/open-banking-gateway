@@ -43,8 +43,6 @@
     <sequenceFlow id="sid-B4A38440-9E24-479E-A358-56B7529066F4" name="Validation errors" sourceRef="hasValidationErrors" targetRef="reportErrorAndRestoreContextBefore">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[#{hbciValidationErrors.isPresent(CONTEXT)}]]></conditionExpression>
     </sequenceFlow>
-    <textAnnotation id="sid-B098BEE8-3993-4349-B849-ED54FB92CAF2"></textAnnotation>
-    <association id="sid-DF609782-B965-42E8-AFDE-94DABF994E40" sourceRef="updateContextToRealMode" targetRef="sid-B098BEE8-3993-4349-B849-ED54FB92CAF2" associationDirection="None"></association>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_hbci-request-saga">
     <bpmndi:BPMNPlane bpmnElement="hbci-request-saga" id="BPMNPlane_hbci-request-saga">
@@ -87,12 +85,6 @@
       <bpmndi:BPMNShape bpmnElement="reportViolations" id="BPMNShape_reportViolations">
         <omgdc:Bounds height="80.0" width="100.0" x="405.0" y="330.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="sid-B098BEE8-3993-4349-B849-ED54FB92CAF2" id="BPMNShape_sid-B098BEE8-3993-4349-B849-ED54FB92CAF2">
-        <omgdc:Bounds height="50.0" width="100.0" x="1112.0" y="150.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="sid-DF609782-B965-42E8-AFDE-94DABF994E40" id="BPMNShape_sid-DF609782-B965-42E8-AFDE-94DABF994E40">
-        <omgdc:Bounds height="0.45573029685533584" width="43.75010849811497" x="1067.4999457509425" y="174.01822860157233"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="sid-C66278C4-EC81-438B-8264-C15C99FDDD18" id="BPMNEdge_sid-C66278C4-EC81-438B-8264-C15C99FDDD18">
         <omgdi:waypoint x="1202.002087738753" y="230.94999811889036"></omgdi:waypoint>
         <omgdi:waypoint x="1202.0134069863645" y="312.0"></omgdi:waypoint>
@@ -120,10 +112,6 @@
       <bpmndi:BPMNEdge bpmnElement="sid-254FCF56-028D-4204-9F41-7E9AAB8D1AB3" id="BPMNEdge_sid-254FCF56-028D-4204-9F41-7E9AAB8D1AB3">
         <omgdi:waypoint x="909.9499999999713" y="175.0"></omgdi:waypoint>
         <omgdi:waypoint x="967.0" y="175.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="sid-DF609782-B965-42E8-AFDE-94DABF994E40" id="BPMNEdge_sid-DF609782-B965-42E8-AFDE-94DABF994E40">
-        <omgdi:waypoint x="1066.949999999999" y="174.47916666666666"></omgdi:waypoint>
-        <omgdi:waypoint x="1111.9999999999973" y="174.00989583333336"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="noValidationErrors" id="BPMNEdge_noValidationErrors">
         <omgdi:waypoint x="696.9445521572401" y="175.0"></omgdi:waypoint>
