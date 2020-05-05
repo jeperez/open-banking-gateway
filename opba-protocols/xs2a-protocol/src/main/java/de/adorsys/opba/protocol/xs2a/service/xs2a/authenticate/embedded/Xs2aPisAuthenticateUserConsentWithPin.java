@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * ASPSP returns the result.
  */
 @Slf4j
-@Service("xs2aPisAuthenticateUserConsentWithPin")
+@Service("xs2aPisAuthenticateUserWithPin")
 @RequiredArgsConstructor
 public class Xs2aPisAuthenticateUserConsentWithPin extends ValidatedExecution<Xs2aPisContext> {
 

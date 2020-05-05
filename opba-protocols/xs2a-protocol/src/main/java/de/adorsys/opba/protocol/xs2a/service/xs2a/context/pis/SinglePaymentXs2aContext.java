@@ -1,5 +1,6 @@
 package de.adorsys.opba.protocol.xs2a.service.xs2a.context.pis;
 
+import de.adorsys.opba.protocol.api.dto.payment.PaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,5 +12,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SinglePaymentXs2aContext extends Xs2aPisContext {
-
+    private PaymentType paymentType = PaymentType.SINGLE;
 }

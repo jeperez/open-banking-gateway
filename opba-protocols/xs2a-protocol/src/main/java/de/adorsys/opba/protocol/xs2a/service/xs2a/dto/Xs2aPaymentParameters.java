@@ -1,11 +1,12 @@
 package de.adorsys.opba.protocol.xs2a.service.xs2a.dto;
 
+import de.adorsys.opba.protocol.api.dto.payment.PaymentType;
 import de.adorsys.opba.protocol.xs2a.service.xs2a.context.pis.Xs2aPisContext;
-import de.adorsys.opba.protocol.xs2a.service.xs2a.dto.payment.PaymentType;
 import lombok.Data;
 import org.mapstruct.Mapper;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import static de.adorsys.opba.protocol.xs2a.constant.GlobalConst.SPRING_KEYWORD;
 import static de.adorsys.opba.protocol.xs2a.constant.GlobalConst.XS2A_MAPPERS_PACKAGE;
@@ -25,7 +26,7 @@ public class Xs2aPaymentParameters {
     /**
      * Payment service is provided by ASPSP.
      */
-    @NotBlank
+    @NotNull
     private PaymentType paymentType;
 
     /**

@@ -11,8 +11,7 @@ import static de.adorsys.opba.protocol.xs2a.constant.GlobalConst.SPRING_KEYWORD;
 import static de.adorsys.opba.protocol.xs2a.constant.GlobalConst.XS2A_MAPPERS_PACKAGE;
 
 /**
- * AIS consent access scope object used to represent Global,Dedicated,etc. consents for
- * AIS (Account Information Services).
+ * Payment request body (PIS)
  */
 @Getter
 @Setter
@@ -24,7 +23,6 @@ public class PaymentInitiateBody {
     private String creditorName;
     // optional
     private String creditorAgent;
-    private String creditorAgentName;
     private AddressBody creditorAddress;
     private String remittanceInformationUnstructured;
     private String endToEndIdentification;
@@ -52,7 +50,7 @@ public class PaymentInitiateBody {
     public static class AddressBody {
         private String streetName;
         private String buildingNumber;
-        private String townName;
+        private String city;
         private String postCode;
         private String country;
     }

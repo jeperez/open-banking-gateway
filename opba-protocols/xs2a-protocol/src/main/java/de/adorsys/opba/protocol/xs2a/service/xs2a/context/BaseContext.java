@@ -46,7 +46,8 @@ public class BaseContext implements RequestScoped, UsesRequestScoped {
      */
     private Map<ProtocolAction, String> flowByAction = ImmutableMap.of(
             ProtocolAction.LIST_ACCOUNTS, "xs2a-list-accounts",
-            ProtocolAction.LIST_TRANSACTIONS, "xs2a-list-transactions"
+            ProtocolAction.LIST_TRANSACTIONS, "xs2a-list-transactions",
+            ProtocolAction.INITIATE_PAYMENT, "xs2a-single-payments"
     );
 
     /**
