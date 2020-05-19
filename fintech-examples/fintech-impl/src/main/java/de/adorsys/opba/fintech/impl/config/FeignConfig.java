@@ -1,8 +1,7 @@
 package de.adorsys.opba.fintech.impl.config;
 
-import de.adorsys.opba.api.security.external.domain.DataToSign;
-import de.adorsys.opba.api.security.external.domain.RequestDataToSign;
-import de.adorsys.opba.api.security.external.service.DataToSignBuildingService;
+import de.adorsys.opba.api.security.external.domain.HttpHeaders;
+import de.adorsys.opba.api.security.external.mapper.FeignTemplateToDataToSignMapper;
 import de.adorsys.opba.api.security.external.service.RequestSigningService;
 import de.adorsys.opba.fintech.impl.properties.TppProperties;
 import feign.RequestInterceptor;
@@ -27,8 +26,9 @@ import static de.adorsys.opba.fintech.impl.tppclients.HeaderFields.X_TIMESTAMP_U
 @Configuration
 @RequiredArgsConstructor
 public class FeignConfig {
+    private static final String MISSING_HEADER_ERROR_MESSAGE = " header is missing";
+
     private final RequestSigningService requestSigningService;
-    private final DataToSignBuildingService dataToSignBuildingService;
     private final TppProperties tppProperties;
 
     @Bean
@@ -48,8 +48,25 @@ public class FeignConfig {
     }
 
     private String calculateSignature(RequestTemplate requestTemplate, Instant instant) {
-        RequestDataToSign requestData = new RequestDataToSign(requestTemplate.headers(), requestTemplate.queries(), requestTemplate.path());
-        DataToSign dataToSign = dataToSignBuildingService.buildDataToSign(requestData, instant);
-        return requestSigningService.signature(dataToSign);
+        String operationType = requestTemplate.headers().get(HttpHeaders.X_OPERATION_TYPE).stream().findFirst()
+                                       .orElseThrow(() -> new IllegalStateException(HttpHeaders.X_OPERATION_TYPE + MISSING_HEADER_ERROR_MESSAGE));
+        FeignTemplateToDataToSignMapper mapper = new FeignTemplateToDataToSignMapper();
+
+        switch (operationType) {
+            case "AIS":
+                if (requestTemplate.path().contains("/transactions")) {
+                    return requestSigningService.signature(mapper.mapToListTransactions(requestTemplate, instant));
+                }
+                return requestSigningService.signature(mapper.mapToListAccounts(requestTemplate, instant));
+            case "BANK_SEARCH":
+                if (requestTemplate.path().contains("/bank-search")) {
+                    return requestSigningService.signature(mapper.mapToBankSearch(requestTemplate, instant));
+                }
+                return requestSigningService.signature(mapper.mapToBankProfile(requestTemplate, instant));
+            case "CONFIRM_CONSENT":
+                return requestSigningService.signature(mapper.mapToConfirmConsent(requestTemplate, instant));
+            default:
+                throw new IllegalArgumentException(String.format("Unsupported operation type %s", operationType));
+        }
     }
 }

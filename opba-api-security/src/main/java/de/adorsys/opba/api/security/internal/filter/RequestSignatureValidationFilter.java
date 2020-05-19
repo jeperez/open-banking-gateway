@@ -1,10 +1,9 @@
 package de.adorsys.opba.api.security.internal.filter;
 
 
-import de.adorsys.opba.api.security.external.domain.DataToSign;
 import de.adorsys.opba.api.security.external.domain.FilterValidationHeaderValues;
 import de.adorsys.opba.api.security.external.domain.HttpHeaders;
-import de.adorsys.opba.api.security.external.service.RequestDataExtractingService;
+import de.adorsys.opba.api.security.external.mapper.HttpRequestToDataToSignMapper;
 import de.adorsys.opba.api.security.internal.config.OperationTypeProperties;
 import de.adorsys.opba.api.security.internal.service.RequestVerifyingService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
     public static final String OPBA_BANKING_PATH = "/v1/banking/**";
 
     private final RequestVerifyingService requestVerifyingService;
-    private final RequestDataExtractingService requestDataExtractingService;
     private final Duration requestTimeLimit;
     private final ConcurrentHashMap<String, String> consumerKeysMap;
     private final OperationTypeProperties properties;
@@ -56,8 +54,7 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        DataToSign dataToSign = requestDataExtractingService.extractData(request, instant);
-        boolean verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, dataToSign);
+        boolean verificationResult = verifyRequestSignature(request, headerValues, instant, fintechApiKey);
 
         if (!verificationResult) {
             log.error("Signature verification error ");
@@ -77,6 +74,36 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         return !matcher.match(OPBA_BANKING_PATH, pathHelper.getPathWithinApplication(request));
+    }
+
+    private boolean verifyRequestSignature(HttpServletRequest request, FilterValidationHeaderValues headerValues, Instant instant, String fintechApiKey) {
+        HttpRequestToDataToSignMapper mapper = new HttpRequestToDataToSignMapper();
+        String operationType = headerValues.getOperationType();
+        boolean verificationResult;
+
+        switch (operationType) {
+            case "AIS":
+                if (request.getRequestURI().contains("/transactions")) {
+                    verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToListTransactions(request, instant));
+                } else {
+                    verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToListAccounts(request, instant));
+                }
+                break;
+            case "BANK_SEARCH":
+                if (request.getRequestURI().contains("/bank-search")) {
+                    verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToBankSearch(request, instant));
+                } else {
+                    verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToBankProfile(request, instant));
+                }
+                break;
+            case "CONFIRM_CONSENT":
+                verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToConfirmConsent(request, instant));
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Unsupported operation type %s", operationType));
+        }
+
+        return verificationResult;
     }
 
     private boolean isRequestExpired(Instant operationTime) {
