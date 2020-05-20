@@ -26,7 +26,7 @@ public class HttpRequestToDataToSignMapper {
                 request.getHeader(HttpHeaders.BANK_ID),
                 request.getHeader(HttpHeaders.FINTECH_USER_ID),
                 request.getHeader(HttpHeaders.FINTECH_REDIRECT_URL_OK),
-                request.getHeader(HttpHeaders.FINTECH_REDIRECT_URL_OK)
+                request.getHeader(HttpHeaders.FINTECH_REDIRECT_URL_NOK)
         );
     }
 
@@ -41,7 +41,7 @@ public class HttpRequestToDataToSignMapper {
                 request.getHeader(HttpHeaders.BANK_ID),
                 request.getHeader(HttpHeaders.FINTECH_USER_ID),
                 request.getHeader(HttpHeaders.FINTECH_REDIRECT_URL_OK),
-                request.getHeader(HttpHeaders.FINTECH_REDIRECT_URL_OK),
+                request.getHeader(HttpHeaders.FINTECH_REDIRECT_URL_NOK),
                 request.getParameter(QueryParams.DATE_FROM),
                 request.getParameter(QueryParams.DATE_TO),
                 request.getParameter(QueryParams.ENTRY_REFERENCE_FROM),
