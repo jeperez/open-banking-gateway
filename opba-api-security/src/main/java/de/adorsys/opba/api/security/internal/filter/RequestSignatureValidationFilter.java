@@ -3,6 +3,7 @@ package de.adorsys.opba.api.security.internal.filter;
 
 import de.adorsys.opba.api.security.external.domain.FilterValidationHeaderValues;
 import de.adorsys.opba.api.security.external.domain.HttpHeaders;
+import de.adorsys.opba.api.security.external.domain.OperationType;
 import de.adorsys.opba.api.security.external.mapper.HttpRequestToDataToSignMapper;
 import de.adorsys.opba.api.security.internal.config.OperationTypeProperties;
 import de.adorsys.opba.api.security.internal.service.RequestVerifyingService;
@@ -78,25 +79,25 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
 
     private boolean verifyRequestSignature(HttpServletRequest request, FilterValidationHeaderValues headerValues, Instant instant, String fintechApiKey) {
         HttpRequestToDataToSignMapper mapper = new HttpRequestToDataToSignMapper();
-        String operationType = headerValues.getOperationType();
+        OperationType operationType = OperationType.valueOf(headerValues.getOperationType());
         boolean verificationResult;
 
         switch (operationType) {
-            case "AIS":
-                if (request.getRequestURI().contains("/transactions")) {
+            case AIS:
+                if (OperationType.AIS.isTransactionsPath(request.getRequestURI())) {
                     verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToListTransactions(request, instant));
                 } else {
                     verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToListAccounts(request, instant));
                 }
                 break;
-            case "BANK_SEARCH":
-                if (request.getRequestURI().contains("/bank-search")) {
+            case BANK_SEARCH:
+                if (OperationType.BANK_SEARCH.isBankSearchPath(request.getRequestURI())) {
                     verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToBankSearch(request, instant));
                 } else {
                     verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToBankProfile(request, instant));
                 }
                 break;
-            case "CONFIRM_CONSENT":
+            case CONFIRM_CONSENT:
                 verificationResult = requestVerifyingService.verify(headerValues.getXRequestSignature(), fintechApiKey, mapper.mapToConfirmConsent(request, instant));
                 break;
             default:

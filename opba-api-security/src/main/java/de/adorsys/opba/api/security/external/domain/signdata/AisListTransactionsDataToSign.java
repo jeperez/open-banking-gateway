@@ -8,19 +8,19 @@ import java.util.UUID;
 
 @Value
 public class AisListTransactionsDataToSign {
-    private final UUID xRequestId;
-    private final Instant instant;
-    private final OperationType operationType;
+    UUID xRequestId;
+    Instant instant;
+    OperationType operationType;
 
-    private final String bankId;
-    private final String fintechUserId;
-    private final String redirectOk;
-    private final String redirectNok;
+    String bankId;
+    String fintechUserId;
+    String redirectOk;
+    String redirectNok;
 
-    private final String dateFrom;
-    private final String dateTo;
-    private final String entryReferenceFrom;
-    private final String bookingStatus;
-    private final String deltaList;
+    String dateFrom;
+    String dateTo;
+    String entryReferenceFrom;
+    String bookingStatus;
+    String deltaList;
 
 }

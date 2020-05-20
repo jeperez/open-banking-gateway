@@ -8,9 +8,9 @@ import java.util.UUID;
 
 @Value
 public class BankSearchDataToSign {
-    private final UUID xRequestId;
-    private final Instant instant;
-    private final OperationType operationType;
+    UUID xRequestId;
+    Instant instant;
+    OperationType operationType;
 
-    private final String keyword;
+    String keyword;
 }

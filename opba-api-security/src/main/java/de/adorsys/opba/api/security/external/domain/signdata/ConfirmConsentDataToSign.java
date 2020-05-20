@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Value
 public class ConfirmConsentDataToSign {
-    private final UUID xRequestId;
-    private final Instant instant;
-    private final OperationType operationType;
+    UUID xRequestId;
+    Instant instant;
+    OperationType operationType;
 }

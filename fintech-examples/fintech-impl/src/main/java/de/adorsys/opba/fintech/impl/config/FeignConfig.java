@@ -1,6 +1,7 @@
 package de.adorsys.opba.fintech.impl.config;
 
 import de.adorsys.opba.api.security.external.domain.HttpHeaders;
+import de.adorsys.opba.api.security.external.domain.OperationType;
 import de.adorsys.opba.api.security.external.mapper.FeignTemplateToDataToSignMapper;
 import de.adorsys.opba.api.security.external.service.RequestSigningService;
 import de.adorsys.opba.fintech.impl.properties.TppProperties;
@@ -48,22 +49,23 @@ public class FeignConfig {
     }
 
     private String calculateSignature(RequestTemplate requestTemplate, Instant instant) {
-        String operationType = requestTemplate.headers().get(HttpHeaders.X_OPERATION_TYPE).stream().findFirst()
+        String requestOperationType = requestTemplate.headers().get(HttpHeaders.X_OPERATION_TYPE).stream().findFirst()
                                        .orElseThrow(() -> new IllegalStateException(HttpHeaders.X_OPERATION_TYPE + MISSING_HEADER_ERROR_MESSAGE));
+        OperationType operationType = OperationType.valueOf(requestOperationType);
         FeignTemplateToDataToSignMapper mapper = new FeignTemplateToDataToSignMapper();
 
         switch (operationType) {
-            case "AIS":
-                if (requestTemplate.path().contains("/transactions")) {
+            case AIS:
+                if (OperationType.AIS.isTransactionsPath(requestTemplate.path())) {
                     return requestSigningService.signature(mapper.mapToListTransactions(requestTemplate, instant));
                 }
                 return requestSigningService.signature(mapper.mapToListAccounts(requestTemplate, instant));
-            case "BANK_SEARCH":
-                if (requestTemplate.path().contains("/bank-search")) {
+            case BANK_SEARCH:
+                if (OperationType.BANK_SEARCH.isBankSearchPath(requestTemplate.path())) {
                     return requestSigningService.signature(mapper.mapToBankSearch(requestTemplate, instant));
                 }
                 return requestSigningService.signature(mapper.mapToBankProfile(requestTemplate, instant));
-            case "CONFIRM_CONSENT":
+            case CONFIRM_CONSENT:
                 return requestSigningService.signature(mapper.mapToConfirmConsent(requestTemplate, instant));
             default:
                 throw new IllegalArgumentException(String.format("Unsupported operation type %s", operationType));
